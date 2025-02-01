@@ -66,7 +66,7 @@ export default function Index() {
   const fetchLatestMovies = async () => {
     console.log("HI");
     const [latest] = await Promise.all([
-      fetch(`${host}api/movies/latest?page=${page}`).then((res) => res.json()),
+      fetch(`${host}/movies/latest?page=${page}`).then((res) => res.json()),
     ]);
 
     const updatedMovies = [...latestMovies, ...latest.movies].reduce(

@@ -21,7 +21,7 @@ export default function UserMovies() {
       if (!token) throw new Error("Please login to view your movies");
 
       const endpoint = view === "liked" ? "liked" : "watchlater";
-      const response = await fetch(`${host}api/users/${endpoint}`, {
+      const response = await fetch(`${host}/users/${endpoint}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ export default function UserMovies() {
       const token = localStorage.getItem("token");
       const endpoint = view === "liked" ? "like-rm" : "watchlater-rm";
 
-      const response = await fetch(`${host}api/users/${endpoint}/${movieId}`, {
+      const response = await fetch(`${host}/users/${endpoint}/${movieId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

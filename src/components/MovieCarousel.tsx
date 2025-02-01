@@ -17,7 +17,7 @@ export default function MovieCarousel({ category }: MovieCarouselProps) {
   const [movies, setMovies] = useState([]);
 
   const fetchByCategory = async (category) => {
-    const response = await fetch(`${host}api/movies/category?t=${category}`, {
+    const response = await fetch(`${host}/movies/category?t=${category}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

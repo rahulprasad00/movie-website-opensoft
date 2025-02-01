@@ -25,7 +25,7 @@ export default function Search() {
 
     try {
       // Fuzzy Search
-      const response = await fetch(`${host}api/movies/fuzzy?t=${query}`, {
+      const response = await fetch(`${host}/movies/fuzzy?t=${query}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export default function Search() {
 
       // Semantic Search
       const similarResponse = await fetch(
-        `${host}api/movies/semantic-search?query=${query}`,
+        `${host}/movies/semantic-search?query=${query}`,
         {
           method: "GET",
           headers: {

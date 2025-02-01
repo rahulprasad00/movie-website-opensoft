@@ -46,7 +46,7 @@ export default function SearchBar({ onClose }: { onClose: () => void }) {
     // }
 
     const response = await fetch(
-      `${host}api/movies/autocomplete?t=${query}`,
+      `${host}/movies/autocomplete?t=${query}`,
       {
         method: "GET",
         headers: {

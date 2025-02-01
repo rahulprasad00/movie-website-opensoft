@@ -55,7 +55,7 @@ export default function Movie() {
         const randomVideo = getRandomVideo();
 
         // Fetch movie metadata from backend
-        const response = await fetch(`${host}api/movies/${id}`);
+        const response = await fetch(`${host}/movies/${id}`);
         const data = await response.json();
 
         // Combine backend data with random video source
@@ -78,7 +78,7 @@ export default function Movie() {
 
     const checkWatchLater = async () => {
       try {
-        const response = await fetch(`${host}api/users/watchlater`, {
+        const response = await fetch(`${host}/users/watchlater`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export default function Movie() {
 
 const checkLiked = async () => {
   try {
-    const response = await fetch(`${host}api/users/liked`, {
+    const response = await fetch(`${host}/users/liked`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -133,7 +133,7 @@ const checkLiked = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${host}api/users/${liked ? "like-rm" : "like"}/${id}`,
+        `${host}/users/${liked ? "like-rm" : "like"}/${id}`,
         {
           method: "POST",
           headers: {
@@ -165,7 +165,7 @@ const checkLiked = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${host}api/users/${watchLater ? "watchlater-rm" : "watchlater"}/${id}`,
+        `${host}/users/${watchLater ? "watchlater-rm" : "watchlater"}/${id}`,
         {
           method: "POST",
           headers: {
