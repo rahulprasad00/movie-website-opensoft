@@ -6,8 +6,8 @@ import { google } from "googleapis"; // Import google from googleapis package
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
-const client= PROCESS.env.CLIENT_URL;
-const host= PROCESS.env.API_URL;
+const client = process.env.CLIENT_URL;
+const host = process.env.API_URL;
 
 const router = express.Router();
 
