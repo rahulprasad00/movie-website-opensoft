@@ -38,7 +38,7 @@ export default function SignInDialog({
 
   const handleGoogleSignIn = () => {
     setIsLoading(true);
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL}auth/google`;
   };
 
   const validateForm = () => {
@@ -70,7 +70,7 @@ export default function SignInDialog({
     try {
       const endpoint = isSignUp ? "register" : "login";
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/${endpoint}`,
+        `${import.meta.env.VITE_API_URL}auth/${endpoint}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
