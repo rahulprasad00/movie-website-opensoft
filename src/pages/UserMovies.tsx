@@ -55,6 +55,9 @@ export default function UserMovies() {
 
   const handleRemove = async (movieId) => {
     try {
+      // Remove movie from state
+      setMovies(movies.filter((movie) => movie._id !== movieId));
+
       const token = localStorage.getItem("token");
       const endpoint = view === "liked" ? "like-rm" : "watchlater-rm";
 
@@ -70,8 +73,6 @@ export default function UserMovies() {
         throw new Error("Failed to remove movie");
       }
 
-      // Remove movie from state
-      setMovies(movies.filter((movie) => movie._id !== movieId));
     } catch (err) {
       console.error("Error removing movie:", err);
       setError(err.message);

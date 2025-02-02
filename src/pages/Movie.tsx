@@ -131,6 +131,7 @@ const checkLiked = async () => {
   // ----------------------------------------------------------Handle Like & WatchLater---------------------------------------------------
   const handleLike = async () => {
     try {
+      setLiked(!liked);
       const token = localStorage.getItem("token");
       const response = await fetch(
         `${host}/users/${liked ? "like-rm" : "like"}/${id}`,
@@ -143,9 +144,12 @@ const checkLiked = async () => {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to update like status");
+      if (!response.ok) 
+      {
+          setLiked(!liked);
+          throw new Error("Failed to update like status");
+      }
 
-      setLiked(!liked);
       toast({
         title: liked ? "Removed from liked" : "Added to liked",
         description: liked
@@ -163,6 +167,7 @@ const checkLiked = async () => {
 
   const handleWatchLater = async () => {
     try {
+      setWatchLater(!watchLater);
       const token = localStorage.getItem("token");
       const response = await fetch(
         `${host}/users/${watchLater ? "watchlater-rm" : "watchlater"}/${id}`,
@@ -175,9 +180,11 @@ const checkLiked = async () => {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to update watch later status");
-
-      setWatchLater(!watchLater);
+      if (!response.ok)
+      {  
+        setWatchLater(!watchLater);
+        throw new Error("Failed to update watch later status");
+      }
       toast({
         title: watchLater ? "Removed from Watch Later" : "Added to Watch Later",
         description: watchLater
