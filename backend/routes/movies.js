@@ -162,6 +162,9 @@ router.get("/category", async (req, res) => {
 router.get("/semantic-search", async (req, res) => {
   try {
     const query = req.query.query;
+    const limit = 10;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
 
     // Validate query parameter
     if (!query || typeof query !== "string" || query.trim() === "") {
@@ -187,10 +190,12 @@ router.get("/semantic-search", async (req, res) => {
           knnBeta: {
             vector: queryEmbedding,
             path: "plot_embedding_384",
-            k: 10,
+            k: 50,
           },
         },
       },
+      { $skip: skip },
+      { $limit: limit },
     ]);
 
     // Step 3: Return the results
@@ -221,7 +226,7 @@ router.get("/latest", async (req, res) => {
     const movies = await Movies.find()
       .sort({ year: -1 }) // Sort by year in descending order
       .skip(skip)
-      .limit(pageSize)
+      .limit(pageSize);
 
     // Count total documents for metadata
     const totalMovies = await Movies.countDocuments();
@@ -236,7 +241,6 @@ router.get("/latest", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 //ROUTE 5:Search Movies by Id
 router.get("/:id", async (req, res) => {

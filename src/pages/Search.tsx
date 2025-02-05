@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import MovieCard from "../components/MovieCard";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowDown01,
+  ArrowDownCircle,
+  ArrowDownNarrowWide,
+} from "lucide-react";
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -9,19 +15,23 @@ export default function Search() {
   const [results, setResults] = useState([]);
   const [similar, setSimilar] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
 
   const host = import.meta.env.VITE_API_URL;
-  
+
   const handleMovieName = async (query) => {
     if (!query) {
       setResults([]);
       setSimilar([]);
+      setHasMore(true);
       return;
     }
 
     setLoading(true);
     setError("");
+    setPage(1);
 
     try {
       // Fuzzy Search
@@ -38,7 +48,7 @@ export default function Search() {
 
       // Semantic Search
       const similarResponse = await fetch(
-        `${host}/movies/semantic-search?query=${query}`,
+        `${host}/movies/semantic-search?query=${query}&page=1`,
         {
           method: "GET",
           headers: {
@@ -48,14 +58,42 @@ export default function Search() {
       );
 
       if (!similarResponse.ok)
-        throw new Error("Failed to fetch semantic search results");
+        throw new Error("Failed to fetch similar search results");
       const similarJson = await similarResponse.json();
       setSimilar(similarJson.results || []); // Default to empty if no results
+      setHasMore(similarJson.results.length === 10);
     } catch (err) {
       console.error("Error fetching search results:", err);
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    const nextPage = page + 1;
+
+    try {
+      const similarResponse = await fetch(
+        `${host}/movies/semantic-search?query=${query}&page=${nextPage}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!similarResponse.ok)
+        throw new Error("Failed to fetch more semantic search results");
+
+      const similarJson = await similarResponse.json();
+      setSimilar((prev) => [...prev, ...similarJson.results]); // Append new results
+      setPage(nextPage); // Increase page count
+      setHasMore(similarJson.results.length === 10); // If less than 10, no more results
+    } catch (err) {
+      console.error("Error fetching more results:", err);
+      setError(err.message);
     }
   };
 
@@ -96,6 +134,17 @@ export default function Search() {
                     <MovieCard key={movie._id} {...movie} />
                   ))}
                 </div>
+                {hasMore && (
+                  <div className="flex justify-center mt-6 mb-5">
+                    <Button
+                      className="px-6 py-3 rounded-lg"
+                      onClick={handleLoadMore}
+                    >
+                      <ArrowDownCircle />
+                      Load More
+                    </Button>
+                  </div>
+                )}
               </>
             )}
           </>

@@ -19,7 +19,8 @@ export default function Index() {
       title: "Deadpool 2",
       year: "2023",
       poster: "https://images3.alphacoders.com/678/thumb-1920-678085.jpg", // Replace with your local image path
-      description: "",
+      description:
+        "Foul-mouthed mutant mercenary Wade Wilson (a.k.a. Deadpool) assembles a team of fellow mutant rogues to protect a young boy with abilities from the brutal, time-traveling cyborg Cable",
     },
     {
       id: "2",
@@ -56,7 +57,7 @@ export default function Index() {
   };
 
   const LoadingGrid = () => (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 mt-3 lg:grid-cols-5">
       {[...Array(5)].map((_, index) => (
         <MovieCardSkeleton key={index} />
       ))}
@@ -64,7 +65,6 @@ export default function Index() {
   );
 
   const fetchLatestMovies = async () => {
-    console.log("HI");
     const [latest] = await Promise.all([
       fetch(`${host}/movies/latest?page=${page}`).then((res) => res.json()),
     ]);
@@ -82,10 +82,8 @@ export default function Index() {
     setLatestMovies(updatedMovies);
     setTotal_res(latest.totalMovies);
     setPage(page + 1);
-    console.log(latest);
 
     const x = await latestMovies.length;
-    console.log("Fetching LAtest Movies", x);
   };
 
   useEffect(() => {
