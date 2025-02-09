@@ -5,11 +5,30 @@ import authRoutes from "./routes/auth.js";
 import movieRoutes from "./routes/movies.js";
 import userRoutes from "./routes/user.js";
 import cors from "cors";
+import { Movies } from "./models/Movies.js";
 
 const connurl = process.env.MONGO_URI;
 console.log(connurl);
 
 let conn = await mongoose.connect(connurl);
+
+// const newMovie = new Movies({
+//   title: "Captain America:Civil War",
+//   year: "2023",
+//   poster: "https://images5.alphacoders.com/689/thumb-1920-689398.jpg",
+//   fullplot:
+//     "Political involvement in the Avengers' affairs causes a rift between Captain America and Iron Man..",
+//   imdb: { rating: 7, votes: 646, id: 11293 },
+//   genres: ["Action", "Thriller"],
+// });
+
+// newMovie
+//   .save()
+//   .then(() => {
+//     console.log("Movie added successfully!");
+//     mongoose.connection.close();
+//   })
+//   .catch((err) => console.error("Error adding movie:", err));
 
 const app = express();
 const port = process.env.PORT || 5000; // Use available port in deployment

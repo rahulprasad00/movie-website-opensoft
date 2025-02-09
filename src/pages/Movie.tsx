@@ -254,7 +254,7 @@ const checkLiked = async () => {
                     variant="secondary"
                     className="flex items-center gap-1"
                   >
-                    {movie.genres}
+                    {(!movie.genres)?"":movie.genres}
                   </Badge>
                 )}
                 {movie.imdb.rating && (
@@ -262,7 +262,7 @@ const checkLiked = async () => {
                     variant="secondary"
                     className="flex items-center gap-1"
                   >
-                    <Star className="w-3 h-3" /> {movie.imdb.rating} IMDB
+                    <Star className="w-3 h-3" /> {!(movie.imdb.rating)?"":movie.imdb.rating} IMDB
                   </Badge>
                 )}
                 {movie.year && (

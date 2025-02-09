@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import  {useNavigate}  from "react-router-dom";
 import Navbar from "../components/Navbar";
 import MovieCarousel from "../components/MovieCarousel";
 import { Play, Info } from "lucide-react";
@@ -6,6 +7,7 @@ import MovieCard from "@/components/MovieCard";
 import Spinner from "@/components/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MovieCardSkeleton from "@/components/MovieCardSkeleton";
+import { useToast } from "@/hooks/use-toast";
 
 const host = import.meta.env.VITE_API_URL;
 
@@ -15,25 +17,25 @@ export default function Index() {
   // Predefined list of movies with local image paths
   const localMovies = [
     {
-      id: "1",
+      id: "67a866cc33abf6d32758c6dc",
       title: "Deadpool 2",
       year: "2023",
       poster: "https://images3.alphacoders.com/678/thumb-1920-678085.jpg", // Replace with your local image path
-      description: "",
+      description: "Foul-mouthed mutant mercenary Wade Wilson (a.k.a. Deadpool) assembles a team of fellow mutant rogues to protect a young boy with abilities from the brutal, time-traveling cyborg Cable.",
     },
     {
-      id: "2",
+      id: "67a869fce67f205611c2ce49",
       title: "Godzilla vs Kong",
       year: "2022",
       poster: "https://images5.alphacoders.com/135/thumb-1920-1355086.jpeg",
-      description: "Explosive action-packed adventure with iconic heroes.",
+      description: "The epic next chapter in the cinematic Monsterverse pits two of the greatest icons in motion picture history against each other--the fearsome Godzilla and the mighty Kong--with humanity caught in the balance..",
     },
     {
-      id: "3",
+      id: "67a86b39dd52839b3c36a450",
       title: "Captain America:Civil War",
       year: "2021",
       poster: "https://images5.alphacoders.com/689/thumb-1920-689398.jpg",
-      description: "A gripping thriller that will leave you breathless.",
+      description: "Political involvement in the Avengers' affairs causes a rift between Captain America and Iron Man..",
     },
   ];
 
@@ -42,12 +44,19 @@ export default function Index() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
   const [latestMovies, setLatestMovies] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    !!localStorage.getItem("token") // Assuming authentication token is stored in localStorage
+  );
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [total_res, setTotal_res] = useState(0);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
 
   const featuredMovie = movies[currentMovieIndex] || {
+    id: "0",  // Add a default id
     poster: "/placeholder.jpg",
     title: "Sample Movie",
     description:
@@ -114,6 +123,20 @@ export default function Index() {
     setLoading(false);
   };
 
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const id = featuredMovie?.id; 
+    if (isLoggedIn) {
+      navigate(`/movie/${featuredMovie.id}`);
+    } else {
+      toast({
+        title: "Alert",
+        description: "Please Login to View Movie Details!",
+        variant: "default",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
@@ -151,12 +174,12 @@ export default function Index() {
               {featuredMovie.description}
             </p>
             <div className="flex items-center gap-4 animate-fade-in">
-              <button className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-white/90">
+              <button className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-white/90" onClick={handlePlayClick}>
                 <Play className="h-5 w-5" /> Play Now
               </button>
-              <button className="flex items-center gap-2 rounded-lg bg-white/20 px-6 py-3 font-semibold backdrop-blur-sm transition-colors hover:bg-white/30">
+              {/* <button className="flex items-center gap-2 rounded-lg bg-white/20 px-6 py-3 font-semibold backdrop-blur-sm transition-colors hover:bg-white/30">
                 <Info className="h-5 w-5" /> More Info
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
