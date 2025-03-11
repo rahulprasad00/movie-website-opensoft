@@ -20,7 +20,7 @@ export default function UserMovies() {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Please login to view your movies");
 
-      const endpoint = view === "liked" ? "liked" : "watchlater";
+      const endpoint = (view === "liked") ? "liked" : (view==="watchlater")?"watchlater":"purchased";
       const response = await fetch(`${host}/users/${endpoint}`, {
         method: "GET",
         headers: {
@@ -80,7 +80,8 @@ export default function UserMovies() {
   };
 
   const getPageTitle = () => {
-    return view === "liked" ? "Liked Movies" : "Watch Later";
+    if (view === "purchased")return  "Your Movies" ;
+    else return view === "liked" ? "Liked Movies" : "Watch Later";
   };
 
   return (
@@ -113,6 +114,16 @@ export default function UserMovies() {
             >
               Favorites
             </button>
+            <button
+              onClick={() => (window.location.search = "?view=purchased")}
+              className={`px-4 py-2 rounded-md ${
+                view === "purchased"
+                  ? "bg-primary text-black"
+                  : "bg-secondary text-primary"
+              }`}
+            >
+              Purchased
+            </button>
           </div>
         </div>
 
@@ -130,13 +141,13 @@ export default function UserMovies() {
               {movies.map((movie) => (
                 <div key={movie._id} className="relative group">
                   <MovieCard {...movie} />
-                  <button
+                  {view !="purchased" &&<button
                     onClick={() => handleRemove(movie._id)}
                     className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full 
                              opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     Remove
-                  </button>
+                  </button>}
                 </div>
               ))}
             </div>

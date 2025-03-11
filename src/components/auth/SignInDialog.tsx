@@ -30,6 +30,7 @@ export default function SignInDialog({
     email: "",
     password: "",
     confirmPassword: "",
+    phone:"",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -78,6 +79,7 @@ export default function SignInDialog({
             name: isSignUp ? formData.name : undefined,
             email: formData.email,
             password: formData.password,
+            phone:formData.phone,
           }),
         }
       );
@@ -168,6 +170,7 @@ export default function SignInDialog({
       email: "",
       password: "",
       confirmPassword: "",
+      phone:"",
     });
     setErrors({});
   };
@@ -261,6 +264,18 @@ export default function SignInDialog({
               value={formData.confirmPassword}
               onChange={(e) =>
                 setFormData({ ...formData, confirmPassword: e.target.value })
+              }
+            />
+          )}
+
+          {/* Phone No */}
+          {isSignUp && (
+            <Input
+              type="number"
+              placeholder="Phone No."
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
               }
             />
           )}

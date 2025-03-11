@@ -88,6 +88,16 @@ const UserMenu = () => {
           </Link>
         </DropdownMenuItem>
 
+        <DropdownMenuItem asChild>
+          <Link
+            to="/my-movies?view=purchased"
+            className="flex items-center cursor-pointer"
+          >
+            <Heart className="mr-2 h-4 w-4" />
+            <span>Your Movies</span>
+          </Link>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         {/* <DropdownMenuItem asChild>

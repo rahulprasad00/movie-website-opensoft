@@ -11,6 +11,7 @@ import Movie from "./pages/Movie";
 import AuthCallback from "./pages/AuthCallback";
 
 import UserMovies from "./pages/UserMovies";
+import PaymentSuccess from "./pages/paymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/auth/success" element={<AuthCallback />} />
             <Route path="/my-movies" element={<UserMovies />} />
+            <Route path="/paymentsuccess" element={<PaymentSuccess />} />
             
           </Routes>
         </BrowserRouter>

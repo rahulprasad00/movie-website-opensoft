@@ -2,12 +2,13 @@ import { useEffect, useState, useCallback } from "react";
 import  {useNavigate}  from "react-router-dom";
 import Navbar from "../components/Navbar";
 import MovieCarousel from "../components/MovieCarousel";
-import { Play, Info } from "lucide-react";
+import { Play, Info, NutOff } from "lucide-react";
 import MovieCard from "@/components/MovieCard";
 import Spinner from "@/components/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MovieCardSkeleton from "@/components/MovieCardSkeleton";
 import { useToast } from "@/hooks/use-toast";
+import Razorpay from "razorpay";
 
 const host = import.meta.env.VITE_API_URL;
 
@@ -22,6 +23,7 @@ export default function Index() {
       year: "2023",
       poster: "https://images3.alphacoders.com/678/thumb-1920-678085.jpg", // Replace with your local image path
       description: "Foul-mouthed mutant mercenary Wade Wilson (a.k.a. Deadpool) assembles a team of fellow mutant rogues to protect a young boy with abilities from the brutal, time-traveling cyborg Cable.",
+      amount:"100",
     },
     {
       id: "67a869fce67f205611c2ce49",
@@ -29,6 +31,7 @@ export default function Index() {
       year: "2022",
       poster: "https://images5.alphacoders.com/135/thumb-1920-1355086.jpeg",
       description: "The epic next chapter in the cinematic Monsterverse pits two of the greatest icons in motion picture history against each other--the fearsome Godzilla and the mighty Kong--with humanity caught in the balance..",
+      amount:"100",
     },
     {
       id: "67a86b39dd52839b3c36a450",
@@ -36,6 +39,7 @@ export default function Index() {
       year: "2021",
       poster: "https://images5.alphacoders.com/689/thumb-1920-689398.jpg",
       description: "Political involvement in the Avengers' affairs causes a rift between Captain America and Iron Man..",
+      amount:"100",
     },
   ];
 
@@ -54,6 +58,33 @@ export default function Index() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  //Set user details
+  const [user, setUser] = useState(null);
+  const token = localStorage.getItem("token");
+
+  const fetchUser = async () => {
+    try {
+        const response = await fetch(`${host}/users/findUser`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}` // Sending token for authentication
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch user");
+        }
+
+        const userData = await response.json();
+        console.log("User Data:", userData);
+        // setUser(userData);
+        return userData;
+
+    } catch (error) {
+        console.error("Error fetching user:", error.message);
+    }
+};  
 
   const featuredMovie = movies[currentMovieIndex] || {
     id: "0",  // Add a default id
@@ -62,6 +93,7 @@ export default function Index() {
     description:
       "An epic adventure that will keep you on the edge of your seat.",
     year: "2023",
+    amount:100,
   };
 
   const LoadingGrid = () => (
@@ -101,6 +133,7 @@ export default function Index() {
     fetchLatestMovies();
   }, []);
 
+
   const nextMovie = useCallback(() => {
     if (!isAutoplayPaused) {
       setIsTransitioning(true);
@@ -136,6 +169,77 @@ export default function Index() {
       });
     }
   };
+
+  const handleCheckout = async (featuredMovie) => {
+    //Check if logged in
+    if(!token){
+      toast({
+        title: "Alert",
+        description: "Please Login to View Movie Details!",
+        variant: "default",
+      });
+      return;
+    }
+    const user= await fetchUser();
+    const amount  = featuredMovie.amount;
+    const movieId = featuredMovie.id;
+    const movieName = featuredMovie.title;
+
+    //Fetching the key
+    const response = await fetch(`${host}/getkey`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    const key= data.key;
+
+    //Creating the order
+    console.log("Checking out with amount:", amount);
+    try {
+      const response = await fetch(`${host}/payment/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount }),  // Send amount in the request body
+      });
+  
+      const data = await response.json();
+      const order = data.order;
+
+      console.log("Response:", order);
+
+      const options = {
+        key: key, 
+        amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        currency: "INR",
+        name: movieName,
+        description:"Test Transaction",
+        image: featuredMovie.poster,
+        order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        callback_url: `${host}/payment/paymentverification?movieId=${movieId}`,
+        prefill: {
+            name: user.name,
+            email: user.email,
+            contact: user.phone ? user.phone : "9000090009",
+        },
+        notes: {
+            "address": "Razorpay Corporate Office"
+        },
+        theme: {
+            color: "#3399cc"
+        }
+    };
+    const razor = new (window as any).Razorpay(options);
+    razor.open();
+
+    } catch (error) {
+      console.error("Checkout error:", error.message);
+    }
+  };
+  
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -174,8 +278,8 @@ export default function Index() {
               {featuredMovie.description}
             </p>
             <div className="flex items-center gap-4 animate-fade-in">
-              <button className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-white/90" onClick={handlePlayClick}>
-                <Play className="h-5 w-5" /> Play Now
+              <button className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-white/90" onClick={()=>handleCheckout(featuredMovie)}>
+                <Play className="h-5 w-5" /> Buy Now
               </button>
               {/* <button className="flex items-center gap-2 rounded-lg bg-white/20 px-6 py-3 font-semibold backdrop-blur-sm transition-colors hover:bg-white/30">
                 <Info className="h-5 w-5" /> More Info

@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  phone: {
+    type: Number,
+  },
   likedMovies: [
     {
       movieId: { type: mongoose.Schema.Types.ObjectId, ref: "movies" },
@@ -32,6 +35,12 @@ const userSchema = new mongoose.Schema({
     },
   ],
   watchLater: [
+    {
+      movieId: { type: mongoose.Schema.Types.ObjectId, ref: "movies" },
+      addedAt: { type: Date, default: Date.now },
+    },
+  ],
+  purchased: [
     {
       movieId: { type: mongoose.Schema.Types.ObjectId, ref: "movies" },
       addedAt: { type: Date, default: Date.now },

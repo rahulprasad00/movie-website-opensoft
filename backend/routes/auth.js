@@ -71,9 +71,9 @@ router.get("/google/callback", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password ,phone } = req.body;
 
-    if (!name || !email || !password)
+    if (!name || !email || !password || !phone)
       return res.status(400).json({ error: "All fields are required." });
 
     const existingUser = await User.findOne({ email });
@@ -81,7 +81,7 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Email already in use." });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword, googleId: new mongoose.Types.ObjectId().toString() });
+    const newUser = new User({ name, email, password: hashedPassword, phone: phone, googleId: new mongoose.Types.ObjectId().toString() });
 
     await newUser.save();
     res.json({ message: "User registered successfully." });
