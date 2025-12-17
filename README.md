@@ -17,6 +17,9 @@ This project enhances the **user experience of a movie database website** by int
 - **Google OAuth Integration** – Easy login/signup using Google.
 - **JWT-based authentication** – Secure API access with role-based access control.
 
+### **Payment Integration**
+- **Razorpay Payment Integration**
+
 ### **Advanced Video Playback**
 - **Play/Pause/Seek controls** for movie trailers.
 - **Adjustable playback speed** for a customized viewing experience.
