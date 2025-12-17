@@ -6,6 +6,15 @@ This project enhances the **user experience of a movie database website** by int
 
 **Live Demo:** [Movie Website](https://movie-website-opensoft.vercel.app/)  
 
+Frontend(Vercel)- https://movie-website-opensoft.vercel.app/
+Backend(Vercel)- https://movie-website-opensoft-backend.vercel.app/
+
+Use the Guest account to login:
+Guest
+guest@gmail.com
+Password- guest@123
+Or simply Sign Up
+
 ## Features
 
 ### **Search Enhancements**
