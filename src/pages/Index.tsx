@@ -8,7 +8,7 @@ import Spinner from "@/components/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MovieCardSkeleton from "@/components/MovieCardSkeleton";
 import { useToast } from "@/hooks/use-toast";
-import Razorpay from "razorpay";
+import { useAuth } from "@/context/AuthContext";
 
 const host = import.meta.env.VITE_API_URL;
 
@@ -48,9 +48,8 @@ export default function Index() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
   const [latestMovies, setLatestMovies] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!localStorage.getItem("token") // Assuming authentication token is stored in localStorage
-  );
+  const { user } = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!localStorage.getItem("token"));
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -59,16 +58,20 @@ export default function Index() {
   const { toast } = useToast();
 
   //Set user details
-  const [user, setUser] = useState(null);
-  const token = localStorage.getItem("token");
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    setIsLoggedIn(!!(user?.token || localStorage.getItem("token")));
+  }, [user]);
 
   const fetchUser = async () => {
+    const token = user?.token || localStorage.getItem("token");
     try {
       const response = await fetch(`${host}/users/findUser`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Sending token for authentication
+          Authorization: `Bearer ${token}`, // Sending token for authentication
         },
       });
 
@@ -77,7 +80,7 @@ export default function Index() {
       }
 
       const userData = await response.json();
-      setUser(userData);
+      setUserProfile(userData);
       return userData;
     } catch (error) {
       console.error("Error fetching user:", error.message);
@@ -176,6 +179,7 @@ export default function Index() {
 
   const handleCheckout = async (featuredMovie) => {
     //Check if logged in
+    const token = user?.token || localStorage.getItem("token");
     if(!token){
       toast({
         title: "Alert",
@@ -208,6 +212,7 @@ export default function Index() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ amount }),  // Send amount in the request body
       });

@@ -34,17 +34,7 @@ async function connectDB() {
 connectDB();
 
 /* -------------------- CORS FIX -------------------- */
-app.use(
-  cors({
-    origin: [
-      process.env.CLIENT_URL,
-      "http://localhost:8080",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-  })
-);
-
+app.use(cors());
 // Handle preflight explicitly
 app.options("*", cors());
 
