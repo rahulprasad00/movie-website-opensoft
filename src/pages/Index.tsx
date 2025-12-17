@@ -64,27 +64,31 @@ export default function Index() {
 
   const fetchUser = async () => {
     try {
-        const response = await fetch(`${host}/users/findUser`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}` // Sending token for authentication
-            },
-        });
+      const response = await fetch(`${host}/users/findUser`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Sending token for authentication
+        },
+      });
 
-        if (!response.ok) {
-            throw new Error("Failed to fetch user");
-        }
+      if (!response.ok) {
+        throw new Error("Failed to fetch user");
+      }
 
-        const userData = await response.json();
-        console.log("User Data:", userData);
-        // setUser(userData);
-        return userData;
-
+      const userData = await response.json();
+      setUser(userData);
+      return userData;
     } catch (error) {
-        console.error("Error fetching user:", error.message);
+      console.error("Error fetching user:", error.message);
+      toast({
+        title: "Error",
+        description: "Unable to fetch your profile. Please login again.",
+        variant: "destructive",
+      });
+      return null;
     }
-};  
+  };
 
   const featuredMovie = movies[currentMovieIndex] || {
     id: "0",  // Add a default id
@@ -180,7 +184,9 @@ export default function Index() {
       });
       return;
     }
-    const user= await fetchUser();
+    const userData = await fetchUser();
+    if (!userData) return;
+
     const amount  = featuredMovie.amount;
     const movieId = featuredMovie.id;
     const movieName = featuredMovie.title;
@@ -221,9 +227,9 @@ export default function Index() {
         order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         callback_url: `${host}/payment/paymentverification?movieId=${movieId}`,
         prefill: {
-            name: user.name,
-            email: user.email,
-            contact: user.phone ? user.phone : "9000090009",
+            name: userData.name || "Movie Buff",
+            email: userData.email || "user@example.com",
+            contact: userData.phone ? String(userData.phone) : "9000090009",
         },
         notes: {
             "address": "Razorpay Corporate Office"
